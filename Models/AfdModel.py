@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Set, Dict
 
-class  Afd(BaseModel):
+class Afd(BaseModel):
     states: Set[str]
     input_symbols: Set[str]
     transitions: Dict[str, Dict[str, str]]

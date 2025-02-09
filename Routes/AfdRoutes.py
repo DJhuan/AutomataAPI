@@ -2,11 +2,25 @@ from fastapi import APIRouter, Response
 from Models.AfdModel import Afd
 import dbUtil as db
 from automata.fa.dfa import DFA
+from automata.base.exceptions import AutomatonException
 
 router = APIRouter()
 
+def gerarAFD(afd: Afd):
+    afd = afd.model_dump()
+    return DFA(states=afd["states"],
+                input_symbols=afd["input_symbols"],
+                transitions=afd["transitions"],
+                initial_state=afd["initial_state"],
+                final_states=afd["final_states"])
+
 @router.post("")
 async def new_afd(afd: Afd):
+    try:
+        gerarAFD(afd)
+    except AutomatonException as e:
+        return Response(content=str(e), status_code=400)
+    
     id = await db.insert(afd)
     return {"id": id}
 
@@ -20,15 +34,15 @@ def get_afd(id: int):
 @router.get("/image/{id}")
 def get_afd_image(id: int):
     automato = db.find(id)
+    
     if automato == None:
         return {"error": "Autômato não encontrado"}
     
-    a = automato.dict()
-    maquina = DFA(states=a["states"],
-                input_symbols=a["input_symbols"],
-                transitions=a["transitions"],
-                initial_state=a["initial_state"],
-                final_states=a["final_states"])
+    try:
+        maquina = gerarAFD(automato)
+    except AutomatonException as e:
+        return Response(content=str(e), status_code=400)
+    
     diagrama = maquina.show_diagram()
     
     return Response(content=diagrama.draw(format="png"), media_type="image/png")
@@ -36,14 +50,14 @@ def get_afd_image(id: int):
 @router.post("/{id}")
 def run_afd(id: int, word: str):
     automato = db.find(id)
+    
     if automato == None:
         return {"error": "Autômato não encontrado"}
+    
     else:
-        a = automato.dict()
-        maquina = DFA(states=a["states"],
-                    input_symbols=a["input_symbols"],
-                    transitions=a["transitions"],
-                    initial_state=a["initial_state"],
-                    final_states=a["final_states"])
-        aceitacao = maquina.accepts_input(word)
-        return {"aceitacao": "Aceito" if aceitacao else "Rejeitado"}
+        try:
+            maquina = gerarAFD(automato)
+            aceitacao = maquina.accepts_input(word)
+            return {"aceitacao": "Aceito" if aceitacao else "Rejeitado"}
+        except AutomatonException as e:
+            return Response(content=str(e), status_code=400)
