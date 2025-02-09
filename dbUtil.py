@@ -24,5 +24,11 @@ def find(id):
 
 def delete(id):
     con = sqlite3.connect('atoapi.db')
-    con.cursor().execute('''DELETE FROM automatos WHERE id = ?''', (id,))
-    con.commit()
+    maquina = con.cursor().execute('''SELECT id FROM automatos WHERE id = ?''', (id,)).fetchone()
+    if maquina == None:
+        con.commit
+        return "Máquina inexistente."
+    else:
+        con.cursor().execute('''DELETE FROM automatos WHERE id = ?''', (id,))
+        con.commit()
+        return "Deleção bem sucedida!"

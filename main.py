@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from Routes.AfdModel import router as afd_router
-
+from Routes.AfdRoutes import router as afd_router
+import dbUtil as db
 
 app = FastAPI()
 app.include_router(afd_router, prefix="/afd")
@@ -18,3 +18,8 @@ def read_root():
     Para maiores informações consulte o manual da API!
     """
     return {"greetings": greetings}
+
+@app.delete("/{id}")
+def delete_afd(id: int):
+    mensagem = db.delete(id)
+    return {"message": mensagem}
