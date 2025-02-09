@@ -1,0 +1,26 @@
+{
+    "states": [
+        "q0",
+        "q1",
+        "q2"
+    ],
+    "input_symbols": [
+        "0",
+        "1"
+    ],
+    "tape_symbols": [
+        "0",
+        "1",
+        "B"
+    ],
+    "transitions": {
+        "q0": {"B": ["q1","B","R"]},
+        "q1": {"0": ["q1","1","R"],
+               "B": ["q2","B","L"]}
+        },
+    "initial_state": "q0",
+    "blank_symbol": "B",
+    "final_states": [
+        "q2"
+    ]
+}
