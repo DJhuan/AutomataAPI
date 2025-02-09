@@ -18,7 +18,7 @@ def get_afd(id: int):
     return {"maquina" : automato}
 
 @router.get("/image/{id}")
-def get_afd(id: int):
+def get_afd_image(id: int):
     automato = db.find(id)
     if automato == None:
         return {"error": "Autômato não encontrado"}

@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from Routes.AfdRoutes import router as afd_router
+from Routes.AcpRoutes import router as acp_router
 import dbUtil as db
 
 app = FastAPI()
 app.include_router(afd_router, prefix="/afd")
+app.include_router(acp_router, prefix="/acp")
 
 @app.get("/")
 def read_root():
@@ -20,6 +22,6 @@ def read_root():
     return {"greetings": greetings}
 
 @app.delete("/{id}")
-def delete_afd(id: int):
+def delete_machine(id: int):
     mensagem = db.delete(id)
     return {"message": mensagem}
